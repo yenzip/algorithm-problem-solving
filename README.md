@@ -1,2 +1,9 @@
-# algorithm-problem-solving
-This is an auto push repository for Baekjoon Online Judge created with [BaekjoonHub](https://github.com/BaekjoonHub/BaekjoonHub).
+# Algorithm
+
+<div align="center">
+  
+**🏅 Backjoon sloved rank**
+  
+[![Solved.ac Profile](http://mazassumnida.wtf/api/generate_badge?boj=eomyl0)](https://solved.ac/eomyl0)
+</div>
+
