@@ -9,10 +9,10 @@ public class Main {
         PriorityQueue<Integer> pq = new PriorityQueue<>();
     
         for(int i = 0; i < N; i++) {
-            String[] A = br.readLine().split(" ");
+            StringTokenizer st = new StringTokenizer(br.readLine());
             
             for(int j = 0; j < N; j++) {
-                pq.offer(Integer.parseInt(A[j]));
+                pq.offer(Integer.parseInt(st.nextToken()));
                 
                 if(pq.size() > N) {
                     pq.poll();
