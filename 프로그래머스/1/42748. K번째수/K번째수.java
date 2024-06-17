@@ -2,20 +2,20 @@ import java.util.*;
 
 class Solution {
     public int[] solution(int[] array, int[][] commands) {
-        int[] answer = new int[commands.length];
+        List<Integer> list = new ArrayList<>();
         
-        for(int i = 0; i < commands.length; i++) {
-            int s = commands[i][0] - 1;
-            int e = commands[i][1];
-            int k = commands[i][2] - 1;
+        for(int[] command : commands) {
+            int i = command[0];
+            int j = command[1];
+            int k = command[2];
             
-            int[] tmp = Arrays.copyOfRange(array, s, e);
+            // 배열 자르기: Arrays.copyOfRange(배열, 시작 인덱스, 종료 인덱스)
+            int[] arr = Arrays.copyOfRange(array, i - 1, j);
+            Arrays.sort(arr);
             
-            Arrays.sort(tmp);
-            
-            answer[i] = tmp[k];
+            list.add(arr[k - 1]);
         }
         
-        return answer;
+        return list.stream().mapToInt(Integer::intValue).toArray();
     }
 }
