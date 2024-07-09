@@ -21,7 +21,7 @@ int solution(vector<int> bandage, int health, vector<vector<int>> attacks) {
             idx++;
             success = 0;
         } else {
-            if(success == bandage[0]) {
+            if(success == t) {
                 answer = checkOverHealth(answer + x + y, health);
                 success = 0;
             } else {
@@ -31,8 +31,6 @@ int solution(vector<int> bandage, int health, vector<vector<int>> attacks) {
         time++;
         success++;
     }
-    
-    cout << answer << endl;
     
     return answer <= 0 ? -1 : answer;
 }
