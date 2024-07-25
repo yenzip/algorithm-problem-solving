@@ -2,50 +2,39 @@ import java.util.*;
 
 class Solution {
     public String[] reorderLogFiles(String[] logs) {
-        List<Log> letterLogs = new ArrayList<>();
+        List<String> letterLogs = new ArrayList<>();
         List<String> digitLogs = new ArrayList<>();
         
         for(String log : logs) {
-            String identifier = log.split(" ")[0];
-            String word = log.substring(identifier.length() + 1);
-            
-            if(Character.isDigit(word.charAt(0))) {
-                digitLogs.add(log);
+            if(Character.isLetter(log.split(" ")[1].charAt(0))) {   // Letter-logs인지 확인
+                letterLogs.add(log);
             } else {
-                letterLogs.add(new Log(identifier, word, log));
+                digitLogs.add(log);
             }
         }
         
         Collections.sort(letterLogs, (o1, o2) -> {
-            if(o1.word.equals(o2.word)) {
-                return o1.identifier.compareTo(o2.identifier);
-            }
-            return o1.word.compareTo(o2.word);
+            String[] log1 = o1.split(" ", 2);   // 첫번째 공백을 기준으로 2구역으로 나눔
+            String[] log2 = o2.split(" ", 2);
+            
+            int compared = log1[1].compareTo(log2[1]);
+            if(compared == 0) {
+                return log1[0].compareTo(log2[0]);
+            }          
+            return compared;
         });
         
         String[] answer = new String[logs.length];
         int idx = 0;
         
-        for(Log e : letterLogs) {
-            answer[idx++] = e.log;
+        for(String log : letterLogs) {
+            answer[idx++] = log;
         }
         
-        for(String s : digitLogs) {
-            answer[idx++] = s;
+        for(String log : digitLogs) {
+            answer[idx++] = log;
         }
-             
+        
         return answer;
-    }
-    
-    static class Log {
-        String identifier;
-        String word;
-        String log;
-        
-        Log(String identifier, String word, String log) {
-            this.identifier = identifier;
-            this.word = word;
-            this.log = log;
-        }
     }
 }
