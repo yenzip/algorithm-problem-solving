@@ -15,17 +15,6 @@ class Solution {
             map.put(word, map.getOrDefault(word, 0) + 1);
         }
         
-        String answer = "";
-        int frequent = 0;
-        
-        for(String key : map.keySet()) {
-            int value = map.get(key);
-            if(value > frequent) {
-                answer = key;
-                frequent = value;
-            }
-        }
-        
-        return answer;
+        return Collections.max(map.entrySet(), Map.Entry.comparingByValue()).getKey();
     }
 }
