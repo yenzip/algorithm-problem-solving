@@ -1,29 +1,28 @@
 class Solution {
     public String mostCommonWord(String paragraph, String[] banned) {
-        String[] words = paragraph.toLowerCase().split("[^\\w]+");
-        Set<String> st = new HashSet<>();
-        Map<String, Integer> m = new HashMap<>();
+        String[] words = paragraph.toLowerCase().split("[!?',;.\s]+");      
+        Set<String> set = new HashSet<>();
+        Map<String, Integer> map = new HashMap<>();
         
-        for(String ban : banned) {
-            st.add(ban);
+        for(String b : banned) {
+            set.add(b);
         }
         
         for(String word : words) {
-            if(st.contains(word)) {
+            if(set.contains(word)) {
                 continue;
             }
-            
-            m.put(word, m.getOrDefault(word, 0) + 1);
+            map.put(word, map.getOrDefault(word, 0) + 1);
         }
         
         String answer = "";
-        int maxCount = 0;
+        int frequent = 0;
         
-        for(String key : m.keySet()) {
-            int value = m.get(key);
-            if(maxCount < value) {
+        for(String key : map.keySet()) {
+            int value = map.get(key);
+            if(value > frequent) {
                 answer = key;
-                maxCount = value;
+                frequent = value;
             }
         }
         
