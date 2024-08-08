@@ -11,7 +11,7 @@ class Solution {
         
         for(String i : info) {
             String[] s = i.split(" ");
-            makeCondition(s, 0, new StringBuilder());    // 지원 정보로 만들 수 있는 모든 경우(조건)의 수 구하기
+            makeCondition(s, 0, new ArrayDeque<String>());    // 지원 정보로 만들 수 있는 모든 경우(조건)의 수 구하기
         }
         
         for(String key : map.keySet()) {  // 각 조건 별로 점수를 정렬하기
@@ -30,17 +30,19 @@ class Solution {
         return answer;
     }
     
-    private void makeCondition(String[] s, int i, StringBuilder sb) {
+    private void makeCondition(String[] s, int i, Deque<String> dq) {
         if(i == 4) {
-            map.computeIfAbsent(sb.toString(), v -> new ArrayList<>()).add(Integer.parseInt(s[4]));
+            map.computeIfAbsent(String.join("", dq), v -> new ArrayList<>()).add(Integer.parseInt(s[4]));
             return;
         }
         
-        makeCondition(s, i + 1, sb.append(s[i]));
-        sb.setLength(sb.length() - s[i].length());
+        dq.offerLast(s[i]);
+        makeCondition(s, i + 1, dq);
+        dq.pollLast();
         
-        makeCondition(s, i + 1, sb.append("-"));
-        sb.setLength(sb.length() - 1);
+        dq.offerLast("-");
+        makeCondition(s, i + 1, dq);
+        dq.pollLast();
     }
     
     private int binarySearch(List<Integer> sc, int score) {
