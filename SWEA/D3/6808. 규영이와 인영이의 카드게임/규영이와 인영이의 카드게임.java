@@ -73,7 +73,7 @@ public class Solution {
 		for(int i = 0; i < 9; i++) {
 			if(kyuyoung[i] > perm[i]) {
 				kyu += kyuyoung[i] + perm[i];
-			} else if(kyuyoung[i] < perm[i]) {
+			} else {
 				in += kyuyoung[i] + perm[i];
 			}
 		}
