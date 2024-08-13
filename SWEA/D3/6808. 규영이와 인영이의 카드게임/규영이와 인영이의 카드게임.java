@@ -7,8 +7,6 @@ public class Solution {
 	private static boolean[] card;	// 규영이 카드인지 확인
 	private static int[] kyuyoung;
 	private static int[] inyoung;
-	private static int[] perm;
-	private static boolean[] isSelected;
 	private static int win, loose;
 
 	public static void main(String[] args) throws IOException {
@@ -19,12 +17,9 @@ public class Solution {
 		
 		for(int tc = 1; tc <= T; tc++) {
 			st = new StringTokenizer(br.readLine());
-            
 			card = new boolean[19];
 			kyuyoung = new int[9];
 			inyoung = new int[9];
-			perm = new int[9];
-			isSelected = new boolean[9];
 			win = 0;
 			loose = 0;
 			
@@ -41,13 +36,13 @@ public class Solution {
 				}
 			}
 			
-			permutation(0);
+			swapPermutation(0);
 			
 			System.out.println("#" + tc + " " + win + " " + loose);
 		}
 	}
 	
-	private static void permutation(int depth) {
+	private static void swapPermutation(int depth) {
 		if(depth == 9) {
 			if(isKyuyoungWin()) {
 				win++;
@@ -57,13 +52,10 @@ public class Solution {
 			return;
 		}
 		
-		for(int i = 0; i < 9; i++) {
-			if(!isSelected[i]) {
-				isSelected[i] = true;
-				perm[depth] = inyoung[i];
-				permutation(depth + 1);
-				isSelected[i] = false;
-			}
+		for(int i = depth; i < 9; i++) {
+			swap(depth, i);
+			swapPermutation(depth + 1);
+			swap(depth, i);
 		}
 	}
 	
@@ -71,13 +63,19 @@ public class Solution {
 		int kyu = 0;
 		int in = 0;
 		for(int i = 0; i < 9; i++) {
-			if(kyuyoung[i] > perm[i]) {
-				kyu += kyuyoung[i] + perm[i];
+			if(kyuyoung[i] > inyoung[i]) {
+				kyu += kyuyoung[i] + inyoung[i];
 			} else {
-				in += kyuyoung[i] + perm[i];
+				in += kyuyoung[i] + inyoung[i];
 			}
 		}
 		return kyu > in;
+	}
+	
+	private static void swap(int i, int j) {
+		int tmp = inyoung[i];
+		inyoung[i] = inyoung[j];
+		inyoung[j] = tmp;
 	}
 
 }
