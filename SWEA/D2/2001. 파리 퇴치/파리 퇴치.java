@@ -4,7 +4,7 @@ import java.util.*;
 public class Solution {
 	private static int N, M;
 	private static int[][] arr;
-	private static int[][] accumulatedSum;
+	private static int[][] prefixSum;
 
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
@@ -18,7 +18,7 @@ public class Solution {
 			M = Integer.parseInt(st.nextToken());
 
 			arr = new int[N][N];
-			accumulatedSum = new int[N][N];
+			prefixSum = new int[N + 1][N + 1];
 
 			for (int i = 0; i < N; i++) {
 				st = new StringTokenizer(br.readLine());
@@ -27,44 +27,23 @@ public class Solution {
 				}
 			}
 
-			accumulatedSum[0][0] = arr[0][0];
-
-			for (int i = 1; i < N; i++) {
-				accumulatedSum[0][i] = accumulatedSum[0][i - 1] + arr[0][i];
-				accumulatedSum[i][0] = accumulatedSum[i - 1][0] + arr[i][0];
-			}
-
-			for (int i = 1; i < N; i++) {
-				for (int j = 1; j < N; j++) {
-					accumulatedSum[i][j] = accumulatedSum[i][j - 1] + accumulatedSum[i - 1][j] + arr[i][j]
-							- accumulatedSum[i - 1][j - 1];
+			for (int i = 1; i <= N; i++) {
+				for (int j = 1; j <= N; j++) {
+					prefixSum[i][j] = prefixSum[i][j - 1] + prefixSum[i - 1][j] - prefixSum[i - 1][j - 1] + arr[i - 1][j - 1];
 				}
 			}
 
-			int answer = accumulatedSum[M - 1][M - 1];
+			int answer = Integer.MIN_VALUE;
 
-			for (int i = M - 1; i < N; i++) {
-				for (int j = M - 1; j < N; j++) {
-					if (i == M - 1 && j == M - 1) {
-						continue;
-					}
-					int sum = accumulatedSum[i][j];
-					if (i - M >= 0) {
-						sum -= accumulatedSum[i - M][j];
-					}
-					if (j - M >= 0) {
-						sum -= accumulatedSum[i][j - M];
-					}
-					if (i - M >= 0 && j - M >= 0) {
-						sum += accumulatedSum[i - M][j - M];
-					}
-					answer = Math.max(answer, sum);
+			for (int i = M; i <= N; i++) {
+				for (int j = M; j <= N; j++) {
+					answer = Math.max(answer, prefixSum[i][j] - prefixSum[i - M][j] - prefixSum[i][j - M] + prefixSum[i - M][j - M]);
 				}
 			}
 
 			System.out.println("#" + tc + " " + answer);
 		}
-		
+
 		br.close();
 
 	}
