@@ -16,6 +16,11 @@ public class Solution {
 			int N = Integer.parseInt(br.readLine());
 			String s = br.readLine();
 			
+			if(s.length() % 2 == 1) {
+				System.out.println("#" + tc + " " + 0);
+				continue;
+			}
+			
 			Deque<Character> stk = new ArrayDeque<>();
 			int answer = 1;	// 유효함
 			
