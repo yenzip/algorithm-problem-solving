@@ -21,40 +21,23 @@ public class Solution {
             
             int i = 0;
 
-            while (i < N) {
-                int left = i;
+            while (i < N - 1) {
+                int left = 0;
+                int right = 0;
 
                 // 왼쪽 증가하는 부분 찾기
-                while (left < N - 1 && h[left] < h[left + 1]) {
-                    left++;
-                }
-
-                // 증가하지 않은 경우 바로 넘어감
-                if (left == i) {
+                while (i < N - 1 && h[i] < h[i + 1]) {
+                	left++;
                     i++;
-                    continue;
                 }
 
-                int target = left;
-
-                int right = target;
-
-                // 오른쪽 감소하는 부분 찾기
-                while (right < N - 1 && h[right] > h[right + 1]) {
+                // 오른쪽 증가하는 부분 찾기
+                while (i < N - 1 && h[i] > h[i + 1]) {
                     right++;
-                }
-
-                // 감소하지 않은 경우 바로 넘어감
-                if (right == target) {
                     i++;
-                    continue;
                 }
 
-                // (target - i) * (right - target)로 가능한 경우의 수를 추가
-                answer += (target - i) * (right - target);
-
-                // i 값을 right 다음으로 이동
-                i = right;
+                answer += left * right;
             }
             
             System.out.println("#" + tc + " " + answer);
