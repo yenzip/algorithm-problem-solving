@@ -26,12 +26,6 @@ public class Solution {
 					arr[i][j] = Integer.parseInt(st.nextToken());
 				}
 			}
-			
-			// K가 1일 때는 이미 조건을 만족하므로 답은 0
-			if (K == 1) {
-				System.out.println("#" + tc + " " + 0);
-				continue;
-			}
 
 			answer = D;
 			dfs(0, 0);
@@ -74,12 +68,12 @@ public class Solution {
 			boolean valid = false;
 			int count = 1;
 			for(int i = 1; i < D; i++) {
-				if(arr[i - 1][j] != arr[i][j]) {
+				if(arr[i - 1][j] == arr[i][j]) {
+					count++;
+				} else {
 					count = 1;
-					continue;
-				}
-				count++;
-				if(count == K) {
+				}				
+				if(count >= K) {
 					valid = true;
 					break;
 				}
