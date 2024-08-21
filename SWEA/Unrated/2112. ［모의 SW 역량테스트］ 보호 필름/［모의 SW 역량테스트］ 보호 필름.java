@@ -8,14 +8,11 @@ public class Solution {
 
 	public static void main(String[] args) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-		StringBuilder sb = new StringBuilder();
 		StringTokenizer st;
 
 		int T = Integer.parseInt(br.readLine());
 		
 		for(int tc = 1; tc <= T; tc++) {
-			sb.append('#').append(tc).append(' ');
-			
 			st = new StringTokenizer(br.readLine());
 			D = Integer.parseInt(st.nextToken());
 			W = Integer.parseInt(st.nextToken());
@@ -30,23 +27,26 @@ public class Solution {
 				}
 			}
 			
-			if(K == 1) {
-				sb.append(0).append('\n');
+			// K가 1일 때는 이미 조건을 만족하므로 답은 0
+			if (K == 1) {
+				System.out.println("#" + tc + " " + 0);
 				continue;
 			}
-			
+
 			answer = D;
 			dfs(0, 0);
 			
-			sb.append(answer).append('\n');
+			System.out.println("#" + tc + " " + answer);
 		}
-		
-		System.out.println(sb);
 		
 		br.close();
 	}
 	
 	private static void dfs(int depth, int count) {	// count: 약품을 처리한 횟수
+		if (count >= answer) {  // 조기 종료 조건: 현재 처리한 약품의 수가 이미 최소값 이상일 경우
+            return;
+        }
+		
 		if(depth == D) {
 			if(checkIfPassed()) {
 				answer = Math.min(answer, count);
@@ -73,8 +73,8 @@ public class Solution {
 		for(int j = 0; j < W; j++) {
 			boolean valid = false;
 			int count = 1;
-			for(int i = 0; i < D - 1; i++) {
-				if(arr[i][j] != arr[i + 1][j]) {
+			for(int i = 1; i < D; i++) {
+				if(arr[i - 1][j] != arr[i][j]) {
 					count = 1;
 					continue;
 				}
@@ -90,5 +90,4 @@ public class Solution {
 		}
 		return true;
 	}
-
 }
