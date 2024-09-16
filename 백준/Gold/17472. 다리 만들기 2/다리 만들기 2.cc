@@ -1,40 +1,49 @@
 #include <iostream>
-#include <tuple>
-#include <set>
-#include <vector>
-#include <algorithm>
+#include <queue>
 using namespace std;
+
+struct Edge {
+	int u, v;
+	int weight;
+	bool operator<(const Edge &other) const {
+		return weight > other.weight;
+	}
+};
 
 int N, M;
 int map[10][10];
 bool visited[10][10];
 int dx[4] = { -1, 1, 0, 0 };
 int dy[4] = { 0, 0, -1, 1 };
-typedef tuple<int, int, int> edge;
-set<edge> st;
 int parent[7];
+priority_queue<Edge> pq;
 
 bool isValid(int x, int y) {
 	return (x >= 0 && x < N && y >= 0 && y < M);
 }
 
-void dfs(int x, int y, int num) {
-	if (visited[x][y]) {
-		return;
-	}
+void bfs(int x, int y, int num) {
+	queue<pair<int, int>> q;
 
 	visited[x][y] = true;
-	map[x][y] = num;
+	q.push({ x, y });
 
-	for (int i = 0; i < 4; i++) {
-		int nx = x + dx[i];
-		int ny = y + dy[i];
+	while (!q.empty()) {
+		int curX = q.front().first;
+		int curY = q.front().second;
+		q.pop();
 
-		if (!isValid(nx, ny) || !map[nx][ny]) {
-			continue;
+		map[curX][curY] = num;
+
+		for (int i = 0; i < 4; i++) {
+			int nx = curX + dx[i];
+			int ny = curY + dy[i];
+
+			if (isValid(nx, ny) && map[nx][ny] && !visited[nx][ny]) {
+				visited[nx][ny] = true;
+				q.push({ nx, ny });
+			}
 		}
-
-		dfs(nx, ny, num);
 	}
 }
 
@@ -49,17 +58,13 @@ void distance(int x, int y, int dir) {
 		dist++;
 	}
 
-	if (!isValid(nx, ny) || map[nx][ny] == map[x][y] || dist < 2) {
-		return;
+	// 유효한 다리: 두 섬을 잇는 다리 길이가 2 이상이어야 함
+	if (isValid(nx, ny) && map[nx][ny] != map[x][y] && dist >= 2) {
+		pq.push({ map[x][y], map[nx][ny], dist });
 	}
-
-	st.insert(make_tuple(map[x][y], map[nx][ny], dist));
 }
 
-bool compare(const edge &a, const edge &b) {
-	return get<2>(a) < get<2>(b);
-}
-
+// 유니온 파인드 알고리즘
 int find(int x) {
 	if (parent[x] == x) {
 		return x;
@@ -88,12 +93,12 @@ int main() {
 		}
 	}
 
-	// 1. 섬 구역 분리하기
-	int island = 1;
+	// 1. 섬 구역 구분하기
+	int island = 0;
 	for (int i = 0; i < N; i++) {
 		for (int j = 0; j < M; j++) {
 			if (map[i][j] && !visited[i][j]) {
-				dfs(i, j, island++);
+				bfs(i, j, ++island);
 			}
 		}
 	}
@@ -110,29 +115,32 @@ int main() {
 	}
 
 	// 3. 최소 신장 트리 - 크루스칼
-	for (int i = 1; i < island; i++) {
+	for (int i = 1; i <= island; i++) {
 		parent[i] = i;
 	}
 
-	vector<edge> edges(st.begin(), st.end());
-	
-	sort(edges.begin(), edges.end(), compare);
-
 	int answer = 0;
 	int edgeCount = 0;
-	for (edge e : edges) {
-		int a = get<0>(e);
-		int b = get<1>(e);
-		int w = get<2>(e);
 
+	// 간선 선택 과정
+	while (!pq.empty()) {
+		Edge edge = pq.top();
+		pq.pop();  // 간선을 처리한 후 pop 필요
+
+		int a = edge.u;
+		int b = edge.v;
+		int w = edge.weight;
+
+		// 두 섬이 아직 연결되지 않았다면 선택
 		if (find(a) != find(b)) {
-			merge(a, b);
+			merge(a, b);  // 두 섬을 연결
 			answer += w;
 			edgeCount++;
 		}
 	}
 
-	cout << (edgeCount == island - 2 ? answer : -1);
+	// 모든 섬이 연결되지 않으면 -1 출력
+	cout << (edgeCount == island - 1 ? answer : -1) << endl;
 
 	return 0;
 }
