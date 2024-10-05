@@ -1,48 +1,40 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-bool visited[50];
 int answer;
+bool visited[50];
 
-bool isConvertible(string w1, string w2) {
-    int result = 0;
-    
-    for(int i = 0; i < w1.size(); i++) {
-        if(w1[i] != w2[i]) {
-            result++;
+int diff(string word1, string word2) {
+    int cnt = 0;
+    for(int i = 0; i < word1.size(); i++) {
+        if(word1[i] != word2[i]) {
+            cnt++;
         }
     }
-    
-    return result == 1;
+    return cnt;
 }
 
-void dfs(string now, int depth, string target, vector<string> words) {
-    if(answer <= depth) {
-        return;
-    }
-    
-    if(now == target) {
-        answer = min(answer, depth);
+void dfs(string word, string target, vector<string> words, int len) {
+    if(word == target) {
+        answer = min(answer, len);
         return;
     }
     
     for(int i = 0; i < words.size(); i++) {
-        if(!visited[i] && isConvertible(now, words[i])) {
+        if(!visited[i] && diff(word, words[i]) == 1) {
             visited[i] = true;
-            dfs(words[i], depth + 1, target, words);
+            dfs(words[i], target, words, len + 1);
             visited[i] = false;
         }
     }
 }
 
 int solution(string begin, string target, vector<string> words) {
-    answer = 50;
-    
     if(find(words.begin(), words.end(), target) == words.end()) {
         return 0;
     }
     
-    dfs(begin, 0, target, words);
-    
+    answer = 50;
+    dfs(begin, target, words, 0);
     return answer;
 }
