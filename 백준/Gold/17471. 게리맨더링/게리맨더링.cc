@@ -1,67 +1,73 @@
 #include <iostream>
 #include <vector>
-#include <cstring>
 #include <climits>
+#include <algorithm>
+#include <cstring>
 using namespace std;
 
-int N, x, v;
+int N, cnt, num;
 int people[11];
-vector<vector<int>> graph;
+bool adjMatrix[11][11];	// 인접 행렬
+bool selected[11];
 bool visited[11];
-vector<int> group1, group2;
 int answer;
 
-int dfs(vector<int> group, int now) {
+int dfs(vector<int> &g, int now) {
 	visited[now] = true;
 	int ret = 1;
 
-	for (int next : graph[now]) {
-		for (int i = 0; i < group.size(); i++) {
-			if (next == group[i] && !visited[next]) {
-				ret += dfs(group, next);
-			}
+	for (int next = 1; next <= N; next++) {
+		if (adjMatrix[now][next] && !visited[next] && find(g.begin(), g.end(), next) != g.end()) {
+			ret += dfs(g, next);
 		}
 	}
 
 	return ret;
 }
 
-bool check(vector<int> group) {
-	if (group.size() == 0 || group.size() == N) {
+bool isConnected(vector<int> &g) {
+	if (g.size() == 0 || g.size() == N) {
 		return false;
 	}
 	memset(visited, false, sizeof(visited));
-	return group.size() == dfs(group, group[0]);
+	return g.size() == dfs(g, g[0]);
 }
 
-int calculate(vector<int> group) {
-	int sum = 0;
-	for (int node : group) {
-		sum += people[node];
-	}
-	return sum;
-}
+void divideGroupsAndCheckDiff() {
+	vector<int> A, B;
+	int sumA = 0, sumB = 0;
 
-void combination(int node) {	
-	if (node > N) {
-		if (check(group1) && check(group2)) {
-			int res1 = calculate(group1);
-			int res2 = calculate(group2);
-			answer = min(answer, abs(res1 - res2));
+	for (int i = 1; i <= N; i++) {
+		if (selected[i]) {
+			A.push_back(i);
+			sumA += people[i];
 		}
+		else {
+			B.push_back(i);
+			sumB += people[i];
+		}
+	}
+
+	if (isConnected(A) && isConnected(B)) {
+		answer = min(answer, abs(sumA - sumB));
+	}
+}
+
+void combination(int num) {
+	if (num > N) {
+		divideGroupsAndCheckDiff();
 		return;
 	}
 
-	// 해당 정점 Group1 선택
-	group1.push_back(node);
-	combination(node + 1);
-	group1.pop_back();
+	// 선택 O
+	selected[num] = true;
+	combination(num + 1);
 
-	// 해당 정점 Group2 선택
-	group2.push_back(node);
-	combination(node + 1);
-	group2.pop_back();
+	// 선택 X
+	selected[num] = false;
+	combination(num + 1);
 }
+
 
 int main() {
 	ios_base::sync_with_stdio(false);
@@ -73,19 +79,17 @@ int main() {
 		cin >> people[i];
 	}
 
-	graph.resize(N + 1);
-
 	for (int i = 1; i <= N; i++) {
-		cin >> x;	// graph[i]의 사이즈
-		for (int j = 0; j < x; j++) {
-			cin >> v;
-			graph[i].push_back(v);
+		cin >> cnt;
+		for (int j = 0; j < cnt; j++) {
+			cin >> num;
+			adjMatrix[i][num] = true;
 		}
 	}
 
 	answer = INT_MAX;
 	combination(1);
-	
+
 	cout << (answer == INT_MAX ? -1 : answer);
 
 	return 0;
