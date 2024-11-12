@@ -4,14 +4,9 @@
 using namespace std;
 
 struct Record {
-	int l;
-	int r;
-	int s;
-};
-
-struct Info {
-	vector<int> cages;
-	int sum;
+	int left;
+	int right;
+	int count;
 };
 
 int T, N, X, M;
@@ -19,30 +14,21 @@ int l, r, s;
 vector<Record> records;
 vector<int> cages;
 vector<int> sum;	// 누적합
-vector<Info> candidates;
+vector<int> answer;
 int max_count;
-
-bool check() {
-	for (Record r : records) {
-		int left = r.l;
-		int right = r.r;
-		int count = r.s;
-
-		if (sum[right] - sum[left - 1] != count) {
-			return false;
-		}
-	}
-
-	return true;
-}
 
 void permutation(int num) {
 	if (num > N) {
-		if (check()) {
-			candidates.push_back({ cages, sum[N] });
-			max_count = max(max_count, sum[N]);
+		// 모든 기록을 만족하는지 확인
+		for (const Record& r : records) {
+			if (sum[r.right] - sum[r.left - 1] != r.count) {
+				return;
+			}
 		}
-		check();
+		if (max_count < sum[N]) {
+			max_count = sum[N];
+			answer = cages;
+		}
 		return;
 	}
 
@@ -52,10 +38,6 @@ void permutation(int num) {
 		permutation(num + 1);
 		sum[num] = 0;
 	}
-}
-
-bool cmp(const Info &a, const Info &b) {
-	return a.cages < b.cages;
 }
 
 int main() {
@@ -74,27 +56,16 @@ int main() {
 			records.push_back({ l, r, s });
 		}
 
-		max_count = 0;
+		max_count = -1;
 		cages.assign(N + 1, 0);
 		sum.assign(N + 1, 0);
-		candidates.clear();
+		answer.clear();
 
 		permutation(1);
 
-		if (candidates.size() == 0) {
+		if (max_count == -1) {
 			cout << "#" << tc << " " << -1 << "\n";
 			continue;
-		}
-
-		vector<int> answer;
-
-		sort(candidates.begin(), candidates.end(), cmp);
-
-		for (Info candidate : candidates) {
-			if (candidate.sum == max_count) {
-				answer = candidate.cages;
-				break;
-			}
 		}
 
 		cout << "#" << tc << " ";
