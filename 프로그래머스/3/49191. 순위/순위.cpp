@@ -1,46 +1,46 @@
-#include <string>
-#include <vector>
-#include <cstring>
-#include <iostream>
+#include <bits/stdc++.h>
+
 using namespace std;
 
 vector<vector<int>> graph;
-vector<vector<int>> reverseGraph;
+vector<vector<int>> reverse_graph;
 bool visited[101];
 
-int dfs(vector<vector<int>> graph, int now) {
-    int ret = 1;
-    for(int next : graph[now]) {
+int dfs(vector<vector<int>> &g, int now) {
+    visited[now] = true;
+    int cnt = 1;
+    
+    for(int next : g[now]) {
         if(!visited[next]) {
-            visited[next] = true;
-            ret += dfs(graph, next);
+            cnt += dfs(g, next);
         }
     }
-    return ret;
+    
+    return cnt;
 }
 
 int solution(int n, vector<vector<int>> results) {
     int answer = 0;
     
     graph.resize(n + 1);
-    reverseGraph.resize(n + 1);
+    reverse_graph.resize(n + 1);
     
-    for(vector<int> result : results) {
+    for(auto result : results) {
         int a = result[0];
         int b = result[1];
         
         graph[a].push_back(b);
-        reverseGraph[b].push_back(a);
+        reverse_graph[b].push_back(a);
     }
     
     for(int i = 1; i <= n; i++) {
         memset(visited, false, sizeof(visited));
-        int count1 = dfs(graph, i);
+        int win = dfs(graph, i);
         
         memset(visited, false, sizeof(visited));
-        int count2 = dfs(reverseGraph, i);
+        int lose = dfs(reverse_graph, i);
         
-        if(count1 + count2 == n + 1) {
+        if(win + lose - 1 == n) {
             answer++;
         }
     }
