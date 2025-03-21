@@ -1,26 +1,23 @@
 #include <bits/stdc++.h>
+
 using namespace std;
 
-bool comp(const string &a, const string &b) {
-    return (a + b) > (b + a);
-}
-
 string solution(vector<int> numbers) {
-    string answer = "";   
-    vector<string> sNumbers;
+    string answer = "";
     
-    for(int number : numbers) {
-        sNumbers.push_back(to_string(number));
-    }
+    sort(numbers.begin(), numbers.end(), [](int a, int b) {
+        string a_str = to_string(a);
+        string b_str = to_string(b);
+        
+        return stoi(a_str + b_str) > stoi(b_str + a_str);
+    });
     
-    sort(sNumbers.begin(), sNumbers.end(), comp);
-    
-    if(sNumbers[0] == "0") {
+    if(to_string(numbers[0]) == "0") {
         return "0";
     }
     
-    for(int i = 0; i < sNumbers.size(); i++) {
-        answer += sNumbers[i];
+    for(int number : numbers) {
+        answer += to_string(number);
     }
     
     return answer;
